@@ -10,10 +10,14 @@ export const setupServer = () => {
     const app = express();
 
     app.use(cors());
-    
+
     app.use(express.json());
 
     // app.use(logger);
+
+    app.get("/", (req, res) => {
+        res.json({ message: "Welcome to the API" });
+    });
 
     app.use("/contacts", contactsRouter);
 
