@@ -5,11 +5,8 @@ import contactsRouter from './routers/contacts.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { logger } from './middlewares/logger.js';
-import { initMongoConnection } from './db/initMongoConnection.js';
 
-export const setupServer = async () => {
-
-    await initMongoConnection();
+export const setupServer = () => {
 
     const app = express();
 
