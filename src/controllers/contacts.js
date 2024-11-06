@@ -73,10 +73,10 @@ export const patchContactController = async (req, res) => {
 export const deleteContactController = async (req, res) => {
     const {id: _id} = req.params;
 
-    const data = await contactServices.deleteContact({_id});
+    const data = await contactServices.deleteContact(_id);
 
     if(!data) {
-        throw createHttpError(404, `Contact with id=${id} not found`);
+        throw createHttpError(404, `Contact with id=${_id} not found`);
     }
 
     res.status(204).send();
