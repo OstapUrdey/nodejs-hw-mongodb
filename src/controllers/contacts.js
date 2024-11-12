@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import * as contactServices from '../services/contacts.js';
 import createHttpError from 'http-errors';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
@@ -22,11 +23,15 @@ export const getContactsController = async (req, res) => {
 };
 
 export const getContactsByIdController = async (req, res) => {
+    const { id } = req.params;
 
-    const {id} = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        throw createHttpError(400, `Invalid contact ID: ${id}`);
+    }
+
     const data = await contactServices.getContactsById(id);
 
-    if(!data) {
+    if (!data) {
         throw createHttpError(404, "Contact not found");
     }
 
@@ -34,7 +39,7 @@ export const getContactsByIdController = async (req, res) => {
         status: 200,
         message: `Successfully found contact with id ${id}!`,
         data,
-    })
+    });
 };
 
 export const createContactController = async (req, res) => {
