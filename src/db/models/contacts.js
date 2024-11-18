@@ -23,7 +23,11 @@ const contactsSchema = new Schema({
         enum: ["work", "home", "personal"],
         default: "personal",
         required: true,
-    }
+    },
+    parentId: {
+        type: Schema.Types.ObjectId,
+        ref: "users"
+    },
 }, {timestamps: true, versionKey: false});
 
 const ContactsCollection = model("Contact", contactsSchema);
