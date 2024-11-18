@@ -5,6 +5,7 @@ import router from './routers/index.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { logger } from './middlewares/logger.js';
+import cookieParser from 'cookie-parser';
 
 export const setupServer = () => {
 
@@ -13,6 +14,8 @@ export const setupServer = () => {
     app.use(cors());
 
     app.use(express.json());
+
+    app.use(cookieParser());
 
     // app.use(logger);
 
