@@ -8,7 +8,7 @@ import { loginUserController } from '../controllers/auth.js';
 
 const router = Router();
 
-router.post("register", validateBody(authRegisterSchema), ctrlWrapper(registerUserController));
+router.post("/register", validateBody(authRegisterSchema), ctrlWrapper(registerUserController));
 
 router.post("/login", validateBody(loginUserSchema), ctrlWrapper(loginUserController));
 
