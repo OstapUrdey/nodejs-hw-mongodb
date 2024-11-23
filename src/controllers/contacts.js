@@ -33,14 +33,14 @@ export const getContactsController = async (req, res, next) => {
 
 export const getContactsByIdController = async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const { id: _id } = req.params;
         const { _id: userId } = req.user;
 
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            throw createHttpError(400, `Invalid contact ID: ${id}`);
+        if (!mongoose.Types.ObjectId.isValid(_id)) {
+            throw createHttpError(400, `Invalid contact ID: ${_id}`);
         }
 
-        const data = await contactServices.getContactsById({ id, userId });
+        const data = await contactServices.getContactsById({ _id, userId });
 
         if (!data) {
             throw createHttpError(404, 'Contact not found');
@@ -48,11 +48,11 @@ export const getContactsByIdController = async (req, res, next) => {
 
         res.json({
             status: 200,
-            message: `Successfully found contact with id ${id}!`,
+            message: `Successfully found contact with id ${_id}!`,
             data,
         });
     } catch (error) {
-        next(error);
+        next(createHttpError(500, error.message));
     }
 };
 
@@ -69,7 +69,7 @@ export const createContactController = async (req, res, next) => {
             data,
         });
     } catch (error) {
-        next(error);
+        next(createHttpError(500, error.message));
     }
 };
 
@@ -82,9 +82,7 @@ export const upsertContactController = async (req, res, next) => {
         const result = await contactServices.updateContact({
             _id,
             payload: contactData,
-            options: {
-                upsert: true,
-            },
+            options: { upsert: true, new: true },
         });
 
         const status = result.isNew ? 201 : 200;
@@ -95,7 +93,7 @@ export const upsertContactController = async (req, res, next) => {
             data: result.data,
         });
     } catch (error) {
-        next(error);
+        next(createHttpError(500, error.message));
     }
 };
 
@@ -107,6 +105,7 @@ export const patchContactController = async (req, res, next) => {
         const result = await contactServices.updateContact({
             _id,
             payload: req.body,
+            options: { new: true },
             filter: { userId },
         });
 
@@ -117,10 +116,10 @@ export const patchContactController = async (req, res, next) => {
         res.json({
             status: 200,
             message: 'Contact patched successfully',
-            data: result,
+            data: result.data,
         });
     } catch (error) {
-        next(error);
+        next(createHttpError(500, error.message));
     }
 };
 
@@ -128,6 +127,10 @@ export const deleteContactController = async (req, res, next) => {
     try {
         const { id: _id } = req.params;
         const { _id: userId } = req.user;
+
+        if (!mongoose.Types.ObjectId.isValid(_id)) {
+            throw createHttpError(400, `Invalid contact ID: ${_id}`);
+        }
 
         const data = await contactServices.deleteContact({ _id, userId });
 
@@ -137,6 +140,6 @@ export const deleteContactController = async (req, res, next) => {
 
         res.status(204).send();
     } catch (error) {
-        next(error);
+        next(createHttpError(500, error.message));
     }
 };
