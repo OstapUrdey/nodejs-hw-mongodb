@@ -7,14 +7,14 @@ export const getContacts = async ({ page = 1, perPage = 10, sortOrder = SORT_ORD
     const limit = perPage;
     const skip = (page - 1) * perPage;
 
-    let contactsQuery = ContactsCollection.find(filter);
+    const filterParams = { userId: filter.userId };
 
     if (filter.type) {
-        contactsQuery.where("contactType").equals(filter.type);
+        filterParams.contactType = filter.type;
     }
 
     if (filter.isFavourite !== undefined) {
-        contactsQuery.where("isFavourite").equals(filter.isFavourite);
+        filterParams.isFavourite = filter.isFavourite;
     }
 
     const validSortFields = ["_id", "name", "phoneNumber", "email", "createdAt", "updatedAt"];
@@ -26,18 +26,10 @@ export const getContacts = async ({ page = 1, perPage = 10, sortOrder = SORT_ORD
         sortOrder = SORT_ORDER.ASC;
     }
 
+    const contactsQuery = ContactsCollection.find(filterParams);
     const data = await contactsQuery.skip(skip).limit(limit).sort({ [sortBy]: sortOrder });
 
-    const countQuery = ContactsCollection.find(filter);
-    if (filter.type) {
-        countQuery.where("contactType").equals(filter.type);
-    }
-
-    if (filter.isFavourite !== undefined) {
-        countQuery.where("isFavourite").equals(filter.isFavourite);
-    }
-
-    const totalItems = await countQuery.countDocuments();
+    const totalItems = await ContactsCollection.find(filterParams).countDocuments();
     const paginationData = calculatePaginationData({ totalItems, page, perPage });
 
     return {

@@ -129,7 +129,7 @@ export const deleteContactController = async (req, res, next) => {
         const { _id: userId } = req.user;
 
         if (!mongoose.Types.ObjectId.isValid(_id)) {
-            throw createHttpError(400, `Invalid contact ID: ${_id}`);
+            return next(createHttpError(400, `Invalid contact ID: ${_id}`));
         }
 
         const data = await contactServices.deleteContact({ _id, userId });
