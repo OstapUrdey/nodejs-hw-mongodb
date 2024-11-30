@@ -25,7 +25,7 @@ export const getContacts = async ({ page = 1, perPage = 10, sortOrder = SORT_ORD
 };
 
 export const getContactById = async ({ _id, userId }) => {
-    return await ContactsCollection.findOne({ _id, userId });  // Перевіряємо належність контакту
+    return await ContactsCollection.findOne({ _id, userId });
 };
 
 export const createContact = payload => ContactsCollection.create(payload);
@@ -39,5 +39,5 @@ export const updateContact = async ({ _id, payload, filter }) => {
 };
 
 export const deleteContact = async ({ _id, userId }) => {
-    return await ContactsCollection.findOneAndDelete({ _id, userId });  // Перевірка на належність контакту
+    return await ContactsCollection.findOneAndDelete({ _id, userId });
 };
