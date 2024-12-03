@@ -28,16 +28,23 @@ export const getContacts = async ({ page = 1, perPage = 10, sortOrder = SORT_ORD
     };
 };
 
-export const getContactsById = (id) => ContactsCollection.findOne({ _id: id });
+export const getContactsById = async (contactId, userId) => {
+    const contact = await ContactsCollection.findOne({ _id: contactId, userId });
+    return contact;
+};
 
 export const createContact = (payload) => ContactsCollection.create(payload);
 
-export const updateContact = async ({ _id, payload, options = {} }) => {
-    const rawResult = await ContactsCollection.findOneAndUpdate({ _id }, payload, {
-        ...options,
-        new: true,
-        includeResultMetadata: true,
-    });
+export const updateContact = async ({ _id, payload, options = {}, userId }) => {
+    const rawResult = await ContactsCollection.findOneAndUpdate(
+        { _id, userId },
+        payload,
+        {
+            ...options,
+            new: true,
+            includeResultMetadata: true,
+        },
+    );
 
     if (!rawResult || !rawResult.value) return null;
 

@@ -1,4 +1,4 @@
-import { Schema, model, mongoose } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { handleSaveError, setUpdateSettings } from './hooks.js';
 
 const contactsSchema = new Schema({
@@ -27,7 +27,7 @@ const contactsSchema = new Schema({
         required: true,
     },
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "users",
         required: true
     },
@@ -39,6 +39,6 @@ contactsSchema.pre("findOneAndUpdate", setUpdateSettings);
 
 contactsSchema.post("findOneAndUpdate", handleSaveError);
 
-const ContactsCollection = mongoose.model("Contact", contactsSchema);
+const ContactsCollection = model("Contact", contactsSchema);
 
 export default ContactsCollection;
