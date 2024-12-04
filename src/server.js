@@ -6,6 +6,7 @@ import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { logger } from './middlewares/logger.js';
 import cookieParser from 'cookie-parser';
+import { UPLOAD_DIR } from './constants/index.js';
 
 export const setupServer = () => {
 
@@ -28,6 +29,8 @@ export const setupServer = () => {
     app.use(notFoundHandler);
 
     app.use(errorHandler);
+
+    app.use("/uploads", express.static(UPLOAD_DIR));
 
     const port = Number(env("PORT", 3000))
 
