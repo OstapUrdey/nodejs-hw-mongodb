@@ -13,34 +13,38 @@ export const getContacts = async ({ page = 1, perPage = 10, sortOrder = SORT_ORD
     if (filter.userId) {
         contactsQuery.where('userId').equals(filter.userId);
     }
-    const contactsCount = await ContactsCollection.find()
-        .merge(contactsQuery)
-        .countDocuments();
-
-    const contacts = await contactsQuery
+    const data = await contactsQuery
         .skip(skip)
         .limit(limit)
-        .sort({ [sortBy]: sortOrder })
-        .exec();
+        .sort({ [sortBy]: sortOrder });
 
-    const paginationData = calculatePaginationData(contactsCount, perPage, page);
+    const totalItems = await contactsQuery.clone().countDocuments();
+
+    const paginationData = calculatePaginationData({ totalItems, page, perPage });
 
     return {
-        data: contacts,
+        data,
         ...paginationData,
     };
 };
 
-export const getContactsById = (id) => ContactsCollection.findOne({ _id: id });
+export const getContactsById = async (contactId, userId) => {
+    const contact = await ContactsCollection.findOne({ _id: contactId, userId });
+    return contact;
+};
 
 export const createContact = (payload) => ContactsCollection.create(payload);
 
-export const updateContact = async ({ _id, payload, options = {} }) => {
-    const rawResult = await ContactsCollection.findOneAndUpdate({ _id }, payload, {
-        ...options,
-        new: true,
-        includeResultMetadata: true,
-    });
+export const updateContact = async ({ _id, payload, options = {}, userId }) => {
+    const rawResult = await ContactsCollection.findOneAndUpdate(
+        { _id, userId },
+        payload,
+        {
+            ...options,
+            new: true,
+            includeResultMetadata: true,
+        },
+    );
 
     if (!rawResult || !rawResult.value) return null;
 
